@@ -92,6 +92,7 @@ if st.session_state.clicked:
     frontier.columns = ['Expected Returns','Volatility']
     st.write("Efficient Frontier")
     st.scatter_chart(frontier,x='Volatility',y='Expected Returns')
+    st.session_state.clicked = False
     # st.write('Allocations')
     # st.bar_chart(wgts,x='Ticker',y='Weights')
     # st.sidebar.write('Creating Portfolio')
