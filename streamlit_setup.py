@@ -4,8 +4,8 @@ import mpt
 import yfinance as yf
 
 # Load the CSV data
-csv_file = '/Users/sarthakdoshi/Documents/Valuation/BCAstocks_8_27.csv'
-indices = pd.read_csv('/Users/sarthakdoshi/Documents/Website/dashboard/indices.csv')
+csv_file = 'BCAstocks_8_27.csv'
+indices = pd.read_csv('indices.csv')
 df = pd.read_csv(csv_file)
 # Display the full table
 # st.write("Full Table")
