@@ -87,5 +87,7 @@ def generate_portfolio(df):
     df = df[df['Ticker'].isin(ticks)]
     mat = covariance_fc(history,df)
     returns,volatility,weights = mpt(mat,df['Total Return'])
+    volatility = [x/10 for x in volatility]
+    returns = [y*100 for y in returns]
     return(returns,volatility,weights)
 
