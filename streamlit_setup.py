@@ -7,11 +7,16 @@ import yfinance as yf
 csv_file = 'BCAstocks_8_27.csv'
 indices = pd.read_csv('indices.csv')
 df = pd.read_csv(csv_file)
+backup_df = df
 # Display the full table
 # st.write("Full Table")
 # st.dataframe(df)
 
 st.sidebar.header('Filter Options')
+
+# def no_filter():
+#     df = backup_df
+#     st.session_state.clicked = False
 
 iv_values = st.sidebar.slider('Implied Volatility', 0.0, df['IV'].max(),value=[0.0,40.0])
 tot_return_values = st.sidebar.slider('Forecasted Total Returns in %', 0.0, 200.0,value=[8.0,100.0])
@@ -20,11 +25,15 @@ etfs = ['All']
 etfs.extend(df['Sector'].unique())
 pe_values = st.sidebar.slider('Current PE Ratio', df['PE Ratio'].min(),df['PE Ratio'].max(),value=[6.0,80.0])
 div_values = st.sidebar.slider('Dividend Yield in %', df['DividendYield'].min(),df['DividendYield'].max(),value=[0.01,5.0])
-min_market = st.sidebar.number_input("Min Market Cap in $Mn ", min_value=0, max_value=3287000, value=10)
-max_market = st.sidebar.number_input("Max Market Cap in $Mn", min_value=0, max_value=3287000, value=1000)
+min_market = st.sidebar.number_input("Min Market Cap in $Mn ", min_value=0, max_value=4000000, value=10)
+max_market = st.sidebar.number_input("Max Market Cap in $Mn", min_value=0, max_value=4000000, value=1000)
 etf_selections = st.sidebar.multiselect('Select ETF',etfs,default='All')
 idx = ['All','S&P 500', 'DJIA', 'Nasdaq 100']
 idx_selection = st.sidebar.multiselect('Index',idx,default=['All'])
+
+# reset,portfolio = st.sidebar.columns(2)
+# with reset: 
+# st.sidebar.button('Reset filters',on_click=no_filter)
 
 # Filter the dataframe based on user input
 if iv_values:
@@ -46,10 +55,11 @@ if etf_selections and not 'All' in etf_selections:
     df = df[df['Sector'].isin(etf_selections)]
 
 if idx_selection and not 'All' in idx_selection:
-    tckr = set()
+    tckr = ['BCML']
     for ind in idx_selection:
-        tckr = tckr or set(indices[ind].dropna())
-    df = df[df['Ticker'].isin(list(tckr))]
+        tckr.extend(indices[ind].dropna())
+    fticks = list(set(df['Ticker']) and set(tckr))
+    df = df[df['Ticker'].isin(fticks)]
 
 # Display headers
 spy, dji, intrate = st.columns(3)
@@ -83,6 +93,7 @@ if 'clicked' not in st.session_state:
 def click_button():
     st.session_state.clicked = True
 
+# with portfolio:
 st.sidebar.button('Generate portfolio', on_click=click_button)
 
 if st.session_state.clicked:
