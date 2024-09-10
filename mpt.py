@@ -4,7 +4,7 @@ from sklearn.impute import KNNImputer
 from scipy.optimize import minimize
 # import streamlit_setup as ss
 
-history = pd.read_csv('/Users/sarthakdoshi/Documents/Website/dashboard/Stocks Quarterly Price Percent Change Table Since 2014.csv')
+history = pd.read_csv('historical_pctchg.csv')
 def covariance_fc(history,df):
     mat = history[history['Ticker'].isin(df['Ticker'])]
     mat = mat.T
