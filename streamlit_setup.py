@@ -1,11 +1,14 @@
 import streamlit as st
 import pandas as pd
+import plotly.express as px
+import matplotlib.pyplot as plt
+import math
 import mpt
 import yfinance as yf
 
 # Load the CSV data
-csv_file = 'BCAstocks_8_27.csv'
-indices = pd.read_csv('indices.csv')
+csv_file = '/Users/sarthakdoshi/Documents/Website/dashboard/BCAstocks_9_13.csv'
+indices = pd.read_csv('/Users/sarthakdoshi/Documents/Website/dashboard/indices.csv')
 df = pd.read_csv(csv_file)
 backup_df = df
 # Display the full table
@@ -14,22 +17,23 @@ backup_df = df
 
 st.sidebar.header('Filter Options')
 
-# def no_filter():
-#     df = backup_df
-#     st.session_state.clicked = False
-
 iv_values = st.sidebar.slider('Implied Volatility', 0.0, df['IV'].max(),value=[0.0,40.0])
 tot_return_values = st.sidebar.slider('Forecasted Total Returns in %', 0.0, 200.0,value=[8.0,100.0])
 # mar_cap_values = st.sidebar.slider('Market Cap in $Bn', 0.004, 3287.0,value=[0.01, 10.0])
 etfs = ['All']
 etfs.extend(df['Sector'].unique())
+sharp_values = st.sidebar.slider('Sharpe Ratio', df['Sharpe Ratio'].min(),df['Sharpe Ratio'].max(),value=[0.4,5.0])
 pe_values = st.sidebar.slider('Current PE Ratio', df['PE Ratio'].min(),df['PE Ratio'].max(),value=[6.0,80.0])
-div_values = st.sidebar.slider('Dividend Yield in %', df['DividendYield'].min(),df['DividendYield'].max(),value=[0.01,5.0])
-min_market = st.sidebar.number_input("Min Market Cap in $Mn ", min_value=0, max_value=4000000, value=10)
-max_market = st.sidebar.number_input("Max Market Cap in $Mn", min_value=0, max_value=4000000, value=1000)
+div_values = st.sidebar.slider('Dividend Yield in %', df['DividendYield'].min(),df['DividendYield'].max(),value=[0.1,15.0])
+minm, maxm = st.sidebar.columns(2)
+with minm:
+    min_market = st.sidebar.number_input("Min Market Cap in $Mn ", min_value=0, max_value=4000000, value=10)
+with maxm:
+    max_market = st.sidebar.number_input("Max Market Cap in $Bn", min_value=0, max_value=4000, value=10)
 etf_selections = st.sidebar.multiselect('Select ETF',etfs,default='All')
 idx = ['All','S&P 500', 'DJIA', 'Nasdaq 100']
 idx_selection = st.sidebar.multiselect('Index',idx,default=['All'])
+mavg = st.sidebar.checkbox('Price above 200 day MA')
 
 # reset,portfolio = st.sidebar.columns(2)
 # with reset: 
@@ -43,7 +47,7 @@ if tot_return_values:
     df = df[df['Total Return'].between(tot_return_values[0],tot_return_values[1])]
 
 if min_market or max_market:
-    df = df[df['Market Cap. (USD)'].between(min_market*1000000,max_market*1000000)]
+    df = df[df['Market Cap. (USD)'].between(min_market*1000000,max_market*1000000000)]
 
 if pe_values:
     df = df[df['PE Ratio'].between(pe_values[0],pe_values[1])]
@@ -55,11 +59,31 @@ if etf_selections and not 'All' in etf_selections:
     df = df[df['Sector'].isin(etf_selections)]
 
 if idx_selection and not 'All' in idx_selection:
-    tckr = ['BCML']
+    tckr = []
     for ind in idx_selection:
-        tckr.extend(indices[ind].dropna())
-    fticks = list(set(df['Ticker']) and set(tckr))
-    df = df[df['Ticker'].isin(fticks)]
+        df = df[df[ind]==ind]
+    #     tckr.extend(indices[ind].dropna())
+    # fticks = list(set(df['Ticker']) and set(tckr))
+    # df = df[df['Ticker'].isin(fticks)]
+
+if mavg:
+    df = df[df['Price Avove 200 MAV']=='YES']
+
+def no_filter():
+    st.session_state.filter_reset = True
+
+def portfolio_button():
+    st.session_state.port_create = True
+
+# with table:
+# st.sidebar.button('Reset Filters', on_click=no_filter)
+st.sidebar.button('Generate portfolio', on_click=portfolio_button)
+
+# if 'filter_reset' not in st.session_state:
+#     st.session_state.filter_reset = False
+
+# if st.session_state.filter_reset:
+#     df = backup_df
 
 # Display headers
 spy, dji, intrate = st.columns(3)
@@ -77,26 +101,27 @@ with dji:
 with intrate:
     irate = yf.Ticker("^TYX")
     chg = float(round((irate.history()['Close'].iloc[-1] - irate.history()['Close'].iloc[-2])/irate.history()['Close'].iloc[-2]*100,2))
-    st.metric(label='10Y Yield Rate', value=round(irate.info['regularMarketOpen'],2), delta=f"{chg}%")
+    st.metric(label='10Y Yield Rate', value=round(irate.info['previousClose'],2), delta=f"{chg}%")
 
 # Display the filtered table
-st.write("Filtered Table")
-st.dataframe(df)
+# table,chart = st.columns(2,gap='medium')
+# with table:
+st.write(f"Total Stocks: {len(df)}")
+st.dataframe(df.iloc[:,:-5], hide_index=True)
+# st.dataframe(df)
 
-st.write("IV - Total Return")
-chart_data = df[['IV', 'Total Return']]
-st.scatter_chart(chart_data,x='IV',y='Total Return')
+# with chart:
+st.write("Implied Volatility - Total Return")
+fig = px.scatter(df, x='IV', y='Total Return', hover_data='Ticker')
+st.plotly_chart(fig)
 
-if 'clicked' not in st.session_state:
-    st.session_state.clicked = False
+# chart_data = df[['IV', 'Total Return']]
+# st.scatter_chart(chart_data,x='IV',y='Total Return')
 
-def click_button():
-    st.session_state.clicked = True
+if 'port_create' not in st.session_state:
+    st.session_state.port_create = False
 
-# with portfolio:
-st.sidebar.button('Generate portfolio', on_click=click_button)
-
-if st.session_state.clicked:
+if st.session_state.port_create:
     ret, vol, wgts = mpt.generate_portfolio(df)
     frontier = pd.DataFrame([ret,vol])
     frontier = frontier.T
@@ -104,6 +129,18 @@ if st.session_state.clicked:
     st.write("Efficient Frontier")
     st.scatter_chart(frontier,x='Volatility',y='Expected Returns')
     st.session_state.clicked = False
-    # st.write('Allocations')
-    # st.bar_chart(wgts,x='Ticker',y='Weights')
-    # st.sidebar.write('Creating Portfolio')
+    lbl = [f'{ret[i]}_{vol[i]}' for i in range(len(ret))]
+    # print(wgts.index.values(),wgts.columns.values())
+    # wgts.reset_index().to_csv('weights.csv',index=False)
+    st.write('Allocations')
+    row_data = wgts.iloc[math.floor(len(wgts)/2),:]
+    row_df = pd.DataFrame(row_data)
+    row_df = row_df[row_data > 0.01]*100
+    st.bar_chart(row_df,y_label='Allocations in %')
+    # fig, ax = plt.subplots()
+    # ax.bar(row_data.index, row_data.values)
+    # ax.set_xlabel('Ticker')
+    # ax.set_ylabel('Allocations')
+
+    # st.pyplot(fig)
+    # st.sidebar.write('Creating Portfolio'
