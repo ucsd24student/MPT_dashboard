@@ -4,5 +4,5 @@ numpy
 scikit-learn == 1.5.1
 yfinance == 0.2.43
 matplotlib==3.9.2
-math
+python-math==0.0.1
 plotly-express==0.4.1
