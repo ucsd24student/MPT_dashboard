@@ -4,7 +4,7 @@ from sklearn.impute import KNNImputer
 from scipy.optimize import minimize
 # import streamlit_setup as ss
 
-history = pd.read_csv('historical_pctchg.csv')
+history = pd.read_csv('/Users/sarthakdoshi/Documents/Website/dashboard/historical_pctchg.csv')
 def covariance_fc(history,df):
     mat = history[history['Ticker'].isin(df['Ticker'])]
     mat = mat.T
@@ -45,11 +45,13 @@ def mpt(mat,expected_returns):
     n_assets = mat.shape[0]
     bounds = [(0, 0.1) for _ in range(n_assets)]
     risk_free_rate = 0.06
-    # portfolio_returns = np.arange(0.08,0.25,0.02)
     opt_weights,opt_returns,opt_volatility,opt_sharpe_ratio = [],[],[],[]
     # Optimize portfolio
     expected_returns = expected_returns/100
-    for ret in expected_returns:
+    min_port = min(expected_returns)
+    max_port = max(expected_returns)
+    portfolio_returns = np.arange(min_port,max_port,(max_port-min_port)/50)
+    for ret in portfolio_returns:
         # Portfolio weights
         initial_weights = np.ones(n_assets) / n_assets
         # initial_weights = initial_weights / np.sum(initial_weights)
@@ -79,7 +81,7 @@ def mpt(mat,expected_returns):
         opt_returns.append(returns)
         opt_volatility.append(volatility)
         opt_sharpe_ratio.append(sharpe_ratio)
-        
+
     return opt_returns,opt_volatility,opt_weights
 
 def generate_portfolio(df):
@@ -87,7 +89,7 @@ def generate_portfolio(df):
     df = df[df['Ticker'].isin(ticks)]
     mat = covariance_fc(history,df)
     returns,volatility,weights = mpt(mat,df['Total Return'])
-    volatility = [x/10 for x in volatility]
-    returns = [y*100 for y in returns]
+    volatility = [round(x/10,2) for x in volatility]
+    returns = [round(y*100,2) for y in returns]
+    weights = pd.DataFrame(weights,columns=df['Ticker'])
     return(returns,volatility,weights)
-
