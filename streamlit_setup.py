@@ -7,8 +7,8 @@ import mpt
 import yfinance as yf
 
 # Load the CSV data
-csv_file = '/Users/sarthakdoshi/Documents/Website/dashboard/BCAstocks_9_13.csv'
-indices = pd.read_csv('/Users/sarthakdoshi/Documents/Website/dashboard/indices.csv')
+csv_file = 'BCAstocks_9_13.csv'
+indices = pd.read_csv('indices.csv')
 df = pd.read_csv(csv_file)
 backup_df = df
 # Display the full table
@@ -61,10 +61,10 @@ if etf_selections and not 'All' in etf_selections:
 if idx_selection and not 'All' in idx_selection:
     tckr = []
     for ind in idx_selection:
-        df = df[df[ind]==ind]
-    #     tckr.extend(indices[ind].dropna())
-    # fticks = list(set(df['Ticker']) and set(tckr))
-    # df = df[df['Ticker'].isin(fticks)]
+        # df = df[df[ind]==ind]
+        tckr.extend(indices[ind].dropna())
+    fticks = list(set(df['Ticker']) and set(tckr))
+    df = df[df['Ticker'].isin(fticks)]
 
 if mavg:
     df = df[df['Price Avove 200 MAV']=='YES']
