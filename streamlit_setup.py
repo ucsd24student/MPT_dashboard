@@ -17,8 +17,8 @@ backup_df = df
 
 st.sidebar.header('Filter Options')
 
-iv_values = st.sidebar.slider('Implied Volatility', 0.0, df['IV'].max(),value=[0.0,40.0])
-tot_return_values = st.sidebar.slider('Forecasted Total Returns in %', 0.0, 200.0,value=[8.0,100.0])
+iv_values = st.sidebar.slider('Implied Volatility', df['IV'].min(), df['IV'].max(),value=[0.0,40.0])
+tot_return_values = st.sidebar.slider('Forecasted Total Returns in %', 0.0, 200.0,value=[8.0,200.0])
 # mar_cap_values = st.sidebar.slider('Market Cap in $Bn', 0.004, 3287.0,value=[0.01, 10.0])
 etfs = ['All']
 etfs.extend(df['Sector'].unique())
@@ -31,8 +31,8 @@ with minm:
 with maxm:
     max_market = st.sidebar.number_input("Max Market Cap in $Bn", min_value=0, max_value=4000, value=10)
 etf_selections = st.sidebar.multiselect('Select ETF',etfs,default='All')
-idx = ['All','S&P 500', 'DJIA', 'Nasdaq 100']
-idx_selection = st.sidebar.multiselect('Index',idx,default=['All'])
+idx = ['S&P 500', 'DJIA', 'Nasdaq 100']
+idx_selection = st.sidebar.multiselect('Index',idx)
 mavg = st.sidebar.checkbox('Price above 200 day MA')
 
 # reset,portfolio = st.sidebar.columns(2)
@@ -58,7 +58,10 @@ if div_values:
 if etf_selections and not 'All' in etf_selections:
     df = df[df['Sector'].isin(etf_selections)]
 
-if idx_selection and not 'All' in idx_selection:
+if sharp_values:
+    df = df[df['Sharpe Ratio'].between(sharp_values[0],sharp_values[1])]
+
+if idx_selection:
     tckr = []
     for ind in idx_selection:
         # df = df[df[ind]==ind]
