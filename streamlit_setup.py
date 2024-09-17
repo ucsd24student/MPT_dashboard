@@ -18,13 +18,13 @@ backup_df = df
 st.sidebar.header('Filter Options')
 
 iv_values = st.sidebar.slider('Implied Volatility', df['IV'].min(), df['IV'].max(),value=[0.0,40.0])
-tot_return_values = st.sidebar.slider('Forecasted Total Returns in %', 0.0, 200.0,value=[8.0,200.0])
+tot_return_values = st.sidebar.slider('Forecasted Total Returns in %', df['Total Return'].min(), 300.0,value=[8.0,100.0])
 # mar_cap_values = st.sidebar.slider('Market Cap in $Bn', 0.004, 3287.0,value=[0.01, 10.0])
 etfs = ['All']
-etfs.extend(df['Sector'].unique())
+etfs.extend(df['ETF'].dropna().unique())
 sharp_values = st.sidebar.slider('Sharpe Ratio', df['Sharpe Ratio'].min(),df['Sharpe Ratio'].max(),value=[0.4,5.0])
 pe_values = st.sidebar.slider('Current PE Ratio', df['PE Ratio'].min(),df['PE Ratio'].max(),value=[6.0,80.0])
-div_values = st.sidebar.slider('Dividend Yield in %', df['DividendYield'].min(),df['DividendYield'].max(),value=[0.1,15.0])
+div_values = st.sidebar.slider('Dividend Yield in %', df['DividendYield'].min(),df['DividendYield'].max(),value=[0.0,15.0])
 minm, maxm = st.sidebar.columns(2)
 with minm:
     min_market = st.sidebar.number_input("Min Market Cap in $Mn ", min_value=0, max_value=4000000, value=10)
@@ -56,7 +56,7 @@ if div_values:
     df = df[df['DividendYield'].between(div_values[0],div_values[1])]
 
 if etf_selections and not 'All' in etf_selections:
-    df = df[df['Sector'].isin(etf_selections)]
+    df = df[df['ETF'].isin(etf_selections)]
 
 if sharp_values:
     df = df[df['Sharpe Ratio'].between(sharp_values[0],sharp_values[1])]
@@ -144,6 +144,4 @@ if st.session_state.port_create:
     # ax.bar(row_data.index, row_data.values)
     # ax.set_xlabel('Ticker')
     # ax.set_ylabel('Allocations')
-
     # st.pyplot(fig)
-    # st.sidebar.write('Creating Portfolio'
