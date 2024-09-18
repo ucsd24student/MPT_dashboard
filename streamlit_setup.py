@@ -17,49 +17,69 @@ backup_df = df
 
 st.sidebar.header('Filter Options')
 
-iv_values = st.sidebar.slider('Implied Volatility', df['IV'].min(), df['IV'].max(),value=[0.0,40.0])
-tot_return_values = st.sidebar.slider('Forecasted Total Returns in %', df['Total Return'].min(), 300.0,value=[8.0,100.0])
-# mar_cap_values = st.sidebar.slider('Market Cap in $Bn', 0.004, 3287.0,value=[0.01, 10.0])
+iv_slider = st.sidebar.checkbox("Implied Volatility")
+if iv_slider:
+    iv_values = st.sidebar.slider('',df['IV'].min(), df['IV'].max(),value=[0.0,40.0])
+
+returns_slider = st.sidebar.checkbox("Forecasted Total Returns in %")
+if returns_slider:
+    tot_return_values = st.sidebar.slider('', df['Total Return'].min(), 300.0,value=[8.0,100.0])
+
+sharp_slider = st.sidebar.checkbox('Sharpe Ratio')
+if sharp_slider:
+    sharp_values = st.sidebar.slider('', df['Sharpe Ratio'].min(),df['Sharpe Ratio'].max(),value=[0.4,5.0])
+
+pe_slider = st.sidebar.checkbox('Current PE Ratio')
+if pe_slider:
+    pe_values = st.sidebar.slider('', df['PE Ratio'].min(),df['PE Ratio'].max(),value=[6.0,80.0])
+
+div_slider = st.sidebar.checkbox('Dividend Yield in %')
+if div_slider:
+    div_values = st.sidebar.slider('', df['DividendYield'].min(),df['DividendYield'].max(),value=[0.0,15.0])
+
+market_slider = st.sidebar.checkbox('Market Cap')
+if market_slider:
+    # mar_cap_values = st.sidebar.slider('Market Cap in $Bn', 0.004, 3287.0,value=[0.01, 10.0])
+    minm, maxm = st.sidebar.columns(2)
+    with minm:
+        min_market = st.sidebar.number_input("Min Market Cap in $Mn ", min_value=0, max_value=4000000, value=10)
+    with maxm:
+        max_market = st.sidebar.number_input("Max Market Cap in $Bn", min_value=0, max_value=4000, value=10)
+
+mavg = st.sidebar.checkbox('Price above 200 day MA')
+
 etfs = ['All']
 etfs.extend(df['ETF'].dropna().unique())
-sharp_values = st.sidebar.slider('Sharpe Ratio', df['Sharpe Ratio'].min(),df['Sharpe Ratio'].max(),value=[0.4,5.0])
-pe_values = st.sidebar.slider('Current PE Ratio', df['PE Ratio'].min(),df['PE Ratio'].max(),value=[6.0,80.0])
-div_values = st.sidebar.slider('Dividend Yield in %', df['DividendYield'].min(),df['DividendYield'].max(),value=[0.0,15.0])
-minm, maxm = st.sidebar.columns(2)
-with minm:
-    min_market = st.sidebar.number_input("Min Market Cap in $Mn ", min_value=0, max_value=4000000, value=10)
-with maxm:
-    max_market = st.sidebar.number_input("Max Market Cap in $Bn", min_value=0, max_value=4000, value=10)
-etf_selections = st.sidebar.multiselect('Select ETF',etfs,default='All')
+etf_selections = st.sidebar.multiselect('Select ETF',etfs)
 idx = ['S&P 500', 'DJIA', 'Nasdaq 100']
 idx_selection = st.sidebar.multiselect('Index',idx)
-mavg = st.sidebar.checkbox('Price above 200 day MA')
+
 
 # reset,portfolio = st.sidebar.columns(2)
 # with reset: 
 # st.sidebar.button('Reset filters',on_click=no_filter)
 
 # Filter the dataframe based on user input
-if iv_values:
+if iv_slider:
     df = df[df['IV'].between(iv_values[0],iv_values[1])]
 
-if tot_return_values:
+if returns_slider:
     df = df[df['Total Return'].between(tot_return_values[0],tot_return_values[1])]
 
-if min_market or max_market:
-    df = df[df['Market Cap. (USD)'].between(min_market*1000000,max_market*1000000000)]
+if sharp_slider:
+    df = df[df['Sharpe Ratio'].between(sharp_values[0],sharp_values[1])]
 
-if pe_values:
+if pe_slider:
     df = df[df['PE Ratio'].between(pe_values[0],pe_values[1])]
 
-if div_values:
+if div_slider:
     df = df[df['DividendYield'].between(div_values[0],div_values[1])]
+
+if market_slider:
+    df = df[df['Market Cap. (USD)'].between(min_market*1000000,max_market*1000000000)]
 
 if etf_selections and not 'All' in etf_selections:
     df = df[df['ETF'].isin(etf_selections)]
-
-if sharp_values:
-    df = df[df['Sharpe Ratio'].between(sharp_values[0],sharp_values[1])]
 
 if idx_selection:
     tckr = []
