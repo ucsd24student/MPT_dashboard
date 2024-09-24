@@ -7,7 +7,7 @@ import mpt
 import yfinance as yf
 
 # Load the CSV data
-csv_file = 'BCAstocks_9_13.csv'
+csv_file = 'BCAstocks_9_23.csv'
 indices = pd.read_csv('indices.csv')
 df = pd.read_csv(csv_file)
 backup_df = df
