@@ -160,6 +160,7 @@ if st.session_state.port_create:
     row_df = pd.DataFrame(row_data)
     row_df = row_df[row_data > 0.01]*100
     st.bar_chart(row_df,y_label='Allocations in %')
+    st.session_state.port_create = False
     # fig, ax = plt.subplots()
     # ax.bar(row_data.index, row_data.values)
     # ax.set_xlabel('Ticker')
