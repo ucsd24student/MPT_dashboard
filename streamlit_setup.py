@@ -90,7 +90,7 @@ if idx_selection:
     df = df[df['Ticker'].isin(fticks)]
 
 if mavg:
-    df = df[df['Price Avove 200 MAV']=='YES']
+    df = df[df['Price Above 200 MAV']=='YES']
 
 def no_filter():
     st.session_state.filter_reset = True
