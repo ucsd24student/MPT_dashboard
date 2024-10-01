@@ -6,3 +6,4 @@ yfinance == 0.2.43
 matplotlib==3.9.2
 python-math==0.0.1
 plotly-express==0.4.1
+streamlit-plotly-events==0.0.6
