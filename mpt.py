@@ -84,7 +84,7 @@ def mpt(mat,expected_returns):
 
     return opt_returns,opt_volatility,opt_weights
 
-def generate_portfolio(df):
+def generate_portfolio(df,bound):
     ticks = list(set(df.Ticker) & set(history.Ticker))
     df = df[df['Ticker'].isin(ticks)]
     mat = covariance_fc(history,df)
