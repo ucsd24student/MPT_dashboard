@@ -10,6 +10,7 @@ import yfinance as yf
 csv_file = 'BCAstocks_9_23.csv'
 indices = pd.read_csv('indices.csv')
 df = pd.read_csv(csv_file)
+df = df[df['Total Return']>=0]
 backup_df = df
 # Display the full table
 # st.write("Full Table")
