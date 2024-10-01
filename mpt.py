@@ -50,7 +50,7 @@ def mpt(mat,expected_returns):
     expected_returns = expected_returns/100
     min_port = min(expected_returns)
     max_port = max(expected_returns)
-    portfolio_returns = np.arange(min_port,max_port,(max_port-min_port)/50)
+    portfolio_returns = np.arange(min_port,max_port,(max_port-min_port)/20)
     for ret in portfolio_returns:
         # Portfolio weights
         initial_weights = np.ones(n_assets) / n_assets
