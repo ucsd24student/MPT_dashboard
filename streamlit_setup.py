@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import matplotlib.pyplot as plt
+from streamlit_plotly_events import plotly_events
 import math
 import mpt
 import yfinance as yf
