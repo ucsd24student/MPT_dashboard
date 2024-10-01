@@ -41,9 +41,9 @@ def negative_sharpe_ratio(weights, expected_returns, cov_matrix, risk_free_rate)
 def return_constraint(weights, expected_returns, target_return):
     return portfolio_return(weights, expected_returns) - target_return
 
-def mpt(mat,expected_returns):
+def mpt(mat,expected_returns,bound):
     n_assets = mat.shape[0]
-    bounds = [(0, 0.1) for _ in range(n_assets)]
+    bounds = [(0, bound) for _ in range(n_assets)]
     risk_free_rate = 0.06
     opt_weights,opt_returns,opt_volatility,opt_sharpe_ratio = [],[],[],[]
     # Optimize portfolio
@@ -88,7 +88,7 @@ def generate_portfolio(df,bound):
     ticks = list(set(df.Ticker) & set(history.Ticker))
     df = df[df['Ticker'].isin(ticks)]
     mat = covariance_fc(history,df)
-    returns,volatility,weights = mpt(mat,df['Total Return'])
+    returns,volatility,weights = mpt(mat,df['Total Return'],bound)
     volatility = [round(x/10,2) for x in volatility]
     returns = [round(y*100,2) for y in returns]
     weights = pd.DataFrame(weights,columns=df['Ticker'])
