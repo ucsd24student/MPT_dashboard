@@ -56,7 +56,7 @@ etf_selections = st.sidebar.multiselect('Select ETF',etfs)
 idx = ['S&P 500', 'DJIA', 'Nasdaq 100']
 idx_selection = st.sidebar.multiselect('Index',idx)
 
-allcs = st.sidebar.number_input('Maximum allocation per stock in %',min_value=5,max_value=20,value=10,help="Select the maximum limit of portfolio share per stock")
+allcs = st.sidebar.number_input('Maximum allocation per stock in %',min_value=2,max_value=20,value=10,help="Select the maximum limit of portfolio share per stock")
 
 
 # Filter the dataframe based on user input
