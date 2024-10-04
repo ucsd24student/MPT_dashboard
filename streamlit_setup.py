@@ -104,7 +104,7 @@ st.sidebar.button('Generate portfolio', on_click=portfolio_button)
 spy, dji, intrate = st.columns(3)
 
 with spy:
-    sp500 = yf.Ticker("SPY")
+    sp500 = yf.Ticker("^SPX")
     chg = float(round((sp500.history()['Close'].iloc[-1] - sp500.history()['Close'].iloc[-2])/sp500.history()['Close'].iloc[-2]*100,2))
     st.metric(label='SPY', value=sp500.info['regularMarketOpen'], delta=f"{chg}%")
 
