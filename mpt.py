@@ -4,23 +4,13 @@ from sklearn.impute import KNNImputer
 from scipy.optimize import minimize
 # import streamlit_setup as ss
 
-history = pd.read_csv('historical_pctchg.csv')
+corr = pd.read_csv('forecasted_corr.csv')
 def covariance_fc(history,df):
-    mat = history[history['Ticker'].isin(df['Ticker'])]
-    mat = mat.T
-    mat.columns = mat.iloc[0,:]
-    mat = mat.iloc[1:,:]
-    imputer = KNNImputer(n_neighbors=10)
-    mat_filled = imputer.fit_transform(mat)
-    pctchg = mat_filled/100
-    pctchg_vol = pctchg.std()
-    arith_mean = np.mean(pctchg,axis=0)
-    pctchg_centered = pctchg - arith_mean
-    V = pctchg_centered.T.dot(pctchg_centered)/pctchg.shape[0]  # historic covariance matrix
+    corr = corr.loc[test['Ticker'],test['Ticker']]
     gamma = np.asarray(df['IV'])
     factor = gamma/pctchg_vol # scaling factor for diagonal scaling method
     D = np.diag(factor)  # diagonal scaling matrix
-    forecasted_cov = D @ V @ D # forecasted covariance
+    forecasted_cov = D @ corr @ D # forecasted covariance
     return forecasted_cov
 
 # Portfolio statistics functions
@@ -75,18 +65,15 @@ def mpt(mat,expected_returns,bound):
         weights = result.x
         returns = portfolio_return(weights, expected_returns)
         volatility = portfolio_volatility(weights, mat)
-        sharpe_ratio = -result.fun
 
         opt_weights.append(weights)
         opt_returns.append(returns)
         opt_volatility.append(volatility)
-        opt_sharpe_ratio.append(sharpe_ratio)
 
     return opt_returns,opt_volatility,opt_weights
 
 def generate_portfolio(df,bound):
-    ticks = list(set(df.Ticker) & set(history.Ticker))
-    df = df[df['Ticker'].isin(ticks)]
+    df = df[df.Ticker.isin(corr.columns)]
     mat = covariance_fc(history,df)
     returns,volatility,weights = mpt(mat,df['Total Return'],bound)
     volatility = [round(x/10,2) for x in volatility]
