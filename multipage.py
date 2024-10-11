@@ -23,8 +23,8 @@ def go_to_how_to_page():
 
 def main_dashboard():
     # Load the CSV data
-    csv_file = '/Users/sarthakdoshi/Documents/Website/dashboard/BCAstocks_9_23.csv'
-    indices = pd.read_csv('/Users/sarthakdoshi/Documents/Website/dashboard/indices.csv')
+    csv_file = 'BCAstocks_9_23.csv'
+    indices = pd.read_csv('indices.csv')
     df = pd.read_csv(csv_file).drop_duplicates()
     df = df[df['Total Return']>=0]
     backup_df = df
