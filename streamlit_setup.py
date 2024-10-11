@@ -377,9 +377,9 @@ def how_to_page():
                         This is the sum of the outstanding stock shares times the current price. 
                         This is calculcated as the sum of the value of all stock, whether traded 
                         or not, at current prices times the number of shares outstanding. A small
-                        cap company would generally be one worth less than $2 billion, a medium 
-                        or mid-cap company is one between $2 billion and $10 billion in value and
-                        a large cap is $10 billion and up.
+                        cap company would generally be one worth less than \$2 billion, a medium 
+                        or mid-cap company is one between \$2 billion and \$10 billion in value and
+                        a large cap is \$10 billion and up.
                         ''')
  
             with st.expander("Price above 200 day moving average"):
