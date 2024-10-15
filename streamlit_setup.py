@@ -133,7 +133,7 @@ def main_dashboard():
         st.metric(label='DJI', value=djindex.info['regularMarketOpen'], delta=f"{chg}%")
 
     with intrate:
-        irate = yf.Ticker("^TYX")
+        irate = yf.Ticker("^TNX")
         chg = float(round((irate.history()['Close'].iloc[-1] - irate.history()['Close'].iloc[-2])/irate.history()['Close'].iloc[-2]*100,2))
         st.metric(label='10Y Yield Rate', value=round(irate.info['previousClose'],2), delta=f"{chg}%")
     
