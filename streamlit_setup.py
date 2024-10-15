@@ -125,17 +125,17 @@ def main_dashboard():
     with spy:
         sp500 = yf.Ticker("^SPX")
         chg = float(round((sp500.history()['Close'].iloc[-1] - sp500.history()['Close'].iloc[-2])/sp500.history()['Close'].iloc[-2]*100,2))
-        st.metric(label='SPY', value=sp500.info['regularMarketOpen'], delta=f"{chg}%")
+        st.metric(label='SPY', value=sp500.info['open'], delta=f"{chg}%")
 
     with dji:
         djindex = yf.Ticker("^DJI")
         chg = float(round((djindex.history()['Close'].iloc[-1] - djindex.history()['Close'].iloc[-2])/djindex.history()['Close'].iloc[-2]*100,2))
-        st.metric(label='DJI', value=djindex.info['regularMarketOpen'], delta=f"{chg}%")
+        st.metric(label='DJI', value=djindex.info['open'], delta=f"{chg}%")
 
     with intrate:
         irate = yf.Ticker("^TNX")
         chg = float(round((irate.history()['Close'].iloc[-1] - irate.history()['Close'].iloc[-2])/irate.history()['Close'].iloc[-2]*100,2))
-        st.metric(label='10Y Yield Rate', value=round(irate.info['previousClose'],2), delta=f"{chg}%")
+        st.metric(label='10Y Yield Rate', value=round(irate.info['open'],2), delta=f"{chg}%")
     
 
     # Display the filtered table
