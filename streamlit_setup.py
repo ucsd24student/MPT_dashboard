@@ -213,7 +213,7 @@ def how_to_page():
         """, 
         unsafe_allow_html=True
     )
-     with info:
+    with info:
         st.header("Forward Portfolio Dashboard", anchor=None, help=None, divider="gray")
         dashboard = """
                     Investing Analytics  developed the Forward Portfolio Dashboard initially for 
