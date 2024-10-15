@@ -7,7 +7,7 @@ import math
 import mpt
 import yfinance as yf
 
-st.set_page_config(page_title="MPT Dashboard", page_icon=":chart:", layout="wide")
+st.set_page_config(page_title="Forward Portfolio Dashboard", page_icon=":chart:", layout="wide")
 
 # Define a key in session state to track the current page
 if "page" not in st.session_state:
@@ -213,21 +213,21 @@ def how_to_page():
         """, 
         unsafe_allow_html=True
     )
-    with info:
-        st.header("Hanapepe Investment Dashboard", anchor=None, help=None, divider="gray")
+     with info:
+        st.header("Forward Portfolio Dashboard", anchor=None, help=None, divider="gray")
         dashboard = """
-                    Hanapepe Investments developed the Hanapepe Investment Dashboard (HID) initially for 
+                    Investing Analytics  developed the Forward Portfolio Dashboard initially for 
                     its own use to manage its own investment portfolio. Drs. Sklarz and Miller leveraged their 
                     decades of analyzing big and disparate data sets to stock investing, including utilizing machine
                     learning models and AI. A research team has now been assembled that is constantly improving the 
                     forward- looking valuation models.
                     """
 
-# Display the paragraph with the full-width styling
+        # Display the paragraph with the full-width styling
         st.markdown(f'<div class="full-width-paragraph">{dashboard}</div>', unsafe_allow_html=True)
         st.header("About Us", anchor=None, help=None, divider="gray")
-        hanapepe = """Hanapepe Investments was founded by Dr. Michael Sklarz. In collaboration with 
-                    Dr. Norm Miller, Hanapepe Investments developed the Hanapepe Investment Dashboard, 
+        hanapepe = """Investing Analytics  was founded by Dr. Michael Sklarz. In collaboration with 
+                    Dr. Norm Miller, Investing Analytics  developed the Forward Portfolio Dashboard. 
                     Dr. Sklarz is credited as one of the early founders of the automated valuation model (AVM) 
                     and is an expert in data and analytics. Through his company, Collateral Analytics, LLC, 
                     Dr. Sklarz licensed his AVM, as well as other derivative analytic products, to the financial 
