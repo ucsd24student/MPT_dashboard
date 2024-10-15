@@ -4,9 +4,9 @@ from sklearn.impute import KNNImputer
 from scipy.optimize import minimize
 # import streamlit_setup as ss
 
-history = pd.read_csv('historical_pctchg.csv')
-def covariance_fc(history,df):
-    mat = history[history['Ticker'].isin(df['Ticker'])]
+forecast_pctchg = pd.read_csv('bayesian_forecast.csv')
+def covariance_fc(pctchg,df):
+    mat = pctchg[pctchg['Ticker'].isin(df['Ticker'])]
     mat = mat.T
     mat.columns = mat.iloc[0,:]
     mat = mat.iloc[1:,:]
@@ -85,9 +85,9 @@ def mpt(mat,expected_returns,bound):
     return opt_returns,opt_volatility,opt_weights
 
 def generate_portfolio(df,bound):
-    ticks = list(set(df.Ticker) & set(history.Ticker))
+    ticks = list(set(df.Ticker) & set(forecast_pctchg.Ticker))
     df = df[df['Ticker'].isin(ticks)]
-    mat = covariance_fc(history,df)
+    mat = covariance_fc(forecast_pctchg,df)
     returns,volatility,weights = mpt(mat,df['Total Return'],bound)
     volatility = [round(x/10,2) for x in volatility]
     returns = [round(y*100,2) for y in returns]
