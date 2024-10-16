@@ -26,7 +26,6 @@ def main_dashboard():
     csv_file = 'BCAstocks_9_23.csv'
     indices = pd.read_csv('indices.csv')
     df = pd.read_csv(csv_file).drop_duplicates()
-    df = df[df['Total Return']>=0]
     backup_df = df
     # Display the full table
     # st.write("Full Table")
@@ -143,6 +142,7 @@ def main_dashboard():
     frontier_column, allocs_chart = st.columns(2,gap='medium')
     with table:
         st.write(f"Total Stocks: {len(df)}")
+        st.write(f"Total Stocks with Positive Total Returns: {len(df[df['Total Return']>=0])}")
         st.dataframe(df.iloc[:,:-5], hide_index=True)
     # st.dataframe(df)
 
@@ -164,6 +164,7 @@ def main_dashboard():
     # ret, vol, wgts = [], [], []
     @st.cache_data
     def generate_scatter_plot(df,allcs):
+        df = df[df['Total Return']>=0]
         ret, vol, wgts = mpt.generate_portfolio(df,allcs/100)
         frontier = pd.DataFrame([ret,vol])
         frontier_chart = frontier.T
