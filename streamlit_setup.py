@@ -168,6 +168,7 @@ def main_dashboard():
         frontier = pd.DataFrame([ret,vol])
         frontier_chart = frontier.T
         frontier_chart.columns = ['Expected Returns','Volatility']
+        frontier_chart = frontier_chart[frontier_chart['Volatility']<=150]
         fig = px.scatter(frontier_chart,x='Volatility',y='Expected Returns',color=frontier_chart['Expected Returns']/frontier_chart['Volatility'],color_continuous_scale='viridis' )
         fig.update_coloraxes(colorbar_title='Sharpe Ratio')
         return fig, ret, vol, wgts
