@@ -148,7 +148,7 @@ def main_dashboard():
 
     with scatter:
         st.write("Implied Volatility - Total Return")
-        fig = px.scatter(df, x='IV', y='Total Return', hover_data='Ticker')
+        fig = px.scatter(df[df['Total Return']>=0], x='IV', y='Total Return', hover_data='Ticker')
         st.plotly_chart(fig)
 
     # chart_data = df[['IV', 'Total Return']]
