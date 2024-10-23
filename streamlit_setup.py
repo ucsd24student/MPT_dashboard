@@ -23,7 +23,7 @@ def go_to_how_to_page():
 
 def main_dashboard():
     # Load the CSV data
-    csv_file = 'BCAstocks_9_23.csv'
+    csv_file = 'stock_data.csv'
     indices = pd.read_csv('indices.csv')
     df = pd.read_csv(csv_file).drop_duplicates()
     backup_df = df
