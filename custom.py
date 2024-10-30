@@ -37,7 +37,7 @@ def scatter_plot_custom(df,curr_ret,curr_vol,rf_rate,bound):
     if frontier_chart['Volatility'].min()>=40:
         frontier_chart['Volatility'] /= 10
     curr_vol /= 10 if curr_vol > frontier_chart['Volatility'].mean() else curr_vol
-    frontier_chart = frontier_chart[frontier_chart['Volatility']<=150]
+    frontier_chart = frontier_chart[frontier_chart['Volatility']<=150].round(2)
     frontier_sharpe = (frontier_chart['Expected Returns'] - rf_rate)/frontier_chart['Volatility']
     fig = px.scatter(frontier_chart,x='Volatility',y='Expected Returns',template="plotly_dark",color=frontier_sharpe,color_continuous_scale='YlGn' )
     fig.add_scatter(x=[curr_vol], y=[curr_ret], mode='markers', marker=dict(symbol='square', size=12, color='red'),
@@ -127,7 +127,7 @@ def build_custom():
                 if uploaded_file: 
                     try:     
                         dataframe.columns = ['Asset','Allocation']
-                        if dataframe['Allocation'].sum() != 100.0:
+                        if round(dataframe['Allocation'].sum(),2) != 100.00:
                             st.write("Allocations do not consolidate to 100%. Please recheck the weights and reupload.")
                         else:
                             st.session_state.assets_data = dataframe
@@ -198,7 +198,7 @@ def build_custom():
         curr_returns = mpt.portfolio_return(weights/100,exp_returns)
         curr_vol = mpt.portfolio_volatility(weights/100,cov)
         curr_max = st.session_state.assets_data['Allocation'].max()
-        bound = curr_max + (10 - curr_max % 10)
+        bound = curr_max + (5 - curr_max % 5)
 
         # with shar:
         fig,wgts = scatter_plot_custom(df,curr_returns,curr_vol,rf_rate,bound)
