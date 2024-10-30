@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import mpt
-from io import StringIO
+from io import BytesIO
 import plotly.express as px
 import plotly.graph_objs as go
 from streamlit_plotly_events import plotly_events
@@ -118,7 +118,8 @@ def build_custom():
                     try:
                         # To read file as bytes:
                         bytes_data = uploaded_file.getvalue()
-                        sheets = pd.ExcelFile(bytes_data)
+                        excel_data = BytesIO(bytes_data)
+                        sheets = pd.ExcelFile(excel_data)
                         dataframe = sheets.parse(sheets.sheet_names[0])
                     except:
                         st.write('Error reading file, upload an excel sheet with tab or comma delimiter')
