@@ -114,7 +114,7 @@ def build_custom():
                         st.write('Error reading file, upload the csv file with tab or comma delimiter')
                         uploaded_file = None
 
-                elif uploaded_file.type == 'application/vnd.ms-excel':
+                elif 'application' in uploaded_file.type:
                     try:
                         # To read file as bytes:
                         bytes_data = uploaded_file.getvalue()
