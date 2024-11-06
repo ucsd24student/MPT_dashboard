@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np
 from sklearn.impute import KNNImputer
 from scipy.optimize import minimize
-# import streamlit_setup as ss
 
 history = pd.read_csv('bayesian_forecast.csv')
 def covariance_fc(history,df):
@@ -20,8 +19,12 @@ def covariance_fc(history,df):
     gamma = np.asarray(df['IV'])
     factor = gamma/pctchg_vol # scaling factor for diagonal scaling method
     D = np.diag(factor)  # diagonal scaling matrix
-    forecasted_cov = D @ V @ D # forecasted covariance
-    return forecasted_cov
+    try:
+        forecasted_cov = D @ V @ D # forecasted covariance
+        return forecasted_cov
+    except:
+        return None
+    
 
 # Portfolio statistics functions
 def portfolio_volatility(weights, cov_matrix):
@@ -43,7 +46,10 @@ def return_constraint(weights, expected_returns, target_return):
 
 def mpt(mat,expected_returns,bound):
     n_assets = mat.shape[0]
-    bounds = [(0, bound) for _ in range(n_assets)]
+    if type(bound) == list:
+        bounds = bound
+    else:
+        bounds = [(0, bound) for _ in range(n_assets)]
     risk_free_rate = 0.06
     opt_weights,opt_returns,opt_volatility,opt_sharpe_ratio = [],[],[],[]
     # Optimize portfolio
@@ -86,8 +92,7 @@ def mpt(mat,expected_returns,bound):
     return opt_returns,opt_volatility,opt_weights
 
 def generate_portfolio(df,bound=10):
-    ticks = list(set(df.Ticker) & set(history.Ticker))
-    df = df[df['Ticker'].isin(ticks)]
+    df = df[df['Ticker'].isin(history.Ticker)]
     mat = covariance_fc(history,df)
     returns,volatility,weights = mpt(mat,df['Total Return'],bound)
     volatility = [round(x,2) for x in volatility]
