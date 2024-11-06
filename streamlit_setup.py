@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-import matplotlib.pyplot as plt
 from streamlit_plotly_events import plotly_events
 import plotly.graph_objs as go
 import mpt
@@ -15,7 +14,40 @@ def main():
         st.set_page_config(layout="wide")
     except:
         temp = None
-    st.session_state.page = st.sidebar.selectbox("Navigate to", ["Dashboard","My Portfolio", "Guide Me"],index=0)
+    # st.session_state.page = st.sidebar.selectbox("Navigate to", ["Dashboard","My Portfolio", "Guide Me"],index=0)
+    if 'page' not in st.session_state:
+        st.session_state.page = "Dashboard"
+    st.sidebar.button("Dashboard",key="db")
+    st.sidebar.button("My Portfolio",key="myport")
+    # st.sidebar.button("Guide Me",key="help")
+
+    left,center,right = st.columns(3,gap='large')
+
+    # with left:
+    #     dashb,myport,gme = st.columns(3,gap='small')
+    #     with dashb:
+    #         st.button("Dashboard",key="db")
+            
+    #     with myport:
+    #         st.button("My Portfolio",key="myport")
+    with right:
+        dash,myp,gm = st.columns(3,gap='small')
+    #     with dash:
+    #         st.button("Dashboard",key="db")
+            
+    #     with myp:
+    #         st.button("My Portfolio",key="myport")
+        
+        with gm:
+            st.button("Guide Me",key="help")
+
+    if "db" in st.session_state and st.session_state.db:
+        st.session_state.page = "Dashboard"
+    elif "myport" in st.session_state and st.session_state.myport:
+        st.session_state.page = "My Portfolio"
+    elif "help" in st.session_state and st.session_state.help:
+        st.session_state.page = "Guide Me"
+
     navigate(st.session_state.page)
     
 def navigate(page):
@@ -26,6 +58,7 @@ def navigate(page):
         main_dashboard()
     elif page == "My Portfolio":
         st.markdown(f"<h1 style='text-align: center; color: {title_color};'>My Portfolio</h1>", unsafe_allow_html=True)
+        st.cache_data.clear()
         custom.build_custom()
     elif page == "Guide Me":
         st.markdown(f"<h1 style='text-align: center; color: {title_color};'>Guide Me</h1>", unsafe_allow_html=True)
@@ -49,7 +82,11 @@ def get_plotly_theme_settings():
 # @st.cache_data
 def generate_scatter_plot(df,allcs):
     df = df[df['Total Return']>=0]
-    ret, vol, wgts = mpt.generate_portfolio(df,allcs/100)
+    try:
+        ret, vol, wgts = mpt.generate_portfolio(df,allcs/100)
+    except Exception as e:
+        st.error(f"Something didn't go right please contact support with the error message! \n Error: {e}")
+        st.stop()
     frontier = pd.DataFrame([ret,vol])
     frontier_chart = frontier.T
     frontier_chart.columns = ['Expected Returns','Volatility']
@@ -58,7 +95,7 @@ def generate_scatter_plot(df,allcs):
     frontier_chart = frontier_chart[frontier_chart['Volatility']<=150].round(2)
     extreme_low = frontier_chart[(frontier_chart['Volatility']>=0.25*frontier_chart['Volatility'].max()) & (frontier_chart['Expected Returns']<=0.15*frontier_chart['Expected Returns'].max())]
     frontier_chart = frontier_chart[~frontier_chart.isin(extreme_low).all(axis=1)]
-    theme = get_plotly_theme_settings()
+    # theme = get_plotly_theme_settings() #dynamic theme update -- to be implemented
     color_scale = 'YlGn' #if theme else 'viridis'
     template = 'plotly_dark' #if theme else 'plotly_white'
     fig = px.scatter(frontier_chart,x='Volatility',y='Expected Returns',template=template,color=frontier_chart['Expected Returns']/frontier_chart['Volatility'],color_continuous_scale=color_scale )
@@ -92,10 +129,6 @@ def main_dashboard():
     csv_file = 'stock_data.csv'
     indices = pd.read_csv('indices.csv')
     df = pd.read_csv(csv_file).drop_duplicates()
-    backup_df = df
-    # Display the full table
-    # st.write("Full Table")
-    # st.dataframe(df)
 
     # if st.sidebar.button("Guide Me"):
     #     mp.go_to_how_to_page()  # Button to switch to How-to page
@@ -179,9 +212,6 @@ def main_dashboard():
 
     # with table:
     st.sidebar.button('Generate portfolio', on_click=portfolio_button,key='port')
-    # st.sidebar.button('Compare Portfolio',on_click=custom_page,key='custompg')
-    # if st.sidebar.button('Compare Portfolio', on_click=lambda: st.session_state.update({"page": "My Portfolio"})):
-    #     navigate("My Portfolio")
 
     # Display headers
     spy, dji, intrate = st.columns(3)
@@ -233,9 +263,6 @@ def main_dashboard():
         fig = px.scatter(df[df['Total Return']>=0], x='IV', y='Total Return', hover_data='Ticker')
         st.plotly_chart(fig)
 
-    # chart_data = df[['IV', 'Total Return']]
-    # st.scatter_chart(chart_data,x='IV',y='Total Return')
-
     if 'port_create' not in st.session_state:
         st.session_state.port_create = False
 
@@ -269,11 +296,6 @@ def main_dashboard():
                 st.header("Allocations")
                 st.write("Expected Return: ",selected_points[0]['y'],'\nVolatility: ',selected_points[0]['x'])
                 st.bar_chart(row_df,y_label='Allocations in %')
-
-    # if 'custom_pg' in st.session_state and st.session_state.custom_pg is True:
-    #     st.session_state.page = "My Portfolio"
-# def main_dashboard():
-#     do_something = True
 
 if __name__ == "__main__":
     main()
