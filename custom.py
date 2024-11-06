@@ -66,11 +66,11 @@ def call_mpt():
         st.session_state.compare_port = True
         
 def scatter_plot_custom(df,curr_ret,curr_vol,rf_rate,bound):
-    # try:
-    ret, vol, wgts = mpt.generate_portfolio(df,bound)
-    # except Exception as e:
-    #     st.error(f"Something didn't go right in GC please contact support with the error message! \n Error: {e}")
-    #     st.stop()
+    try:
+        ret, vol, wgts = mpt.generate_portfolio(df,bound)
+    except Exception as e:
+        st.error(f"Something didn't go right in GC please contact support with the error message! \n Error: {e}")
+        st.stop()
     frontier = pd.DataFrame([ret,vol])
     frontier_chart = frontier.T
     frontier_chart.columns = ['Expected Returns','Volatility']
