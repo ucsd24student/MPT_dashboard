@@ -69,7 +69,7 @@ def scatter_plot_custom(df,curr_ret,curr_vol,rf_rate,bound):
     try:
         ret, vol, wgts = mpt.generate_portfolio(df,bound)
     except Exception as e:
-        st.error(f"Something didn't go right please contact support with the error message! \n Error: {e}")
+        st.error(f"Something didn't go right in GC please contact support with the error message! \n Error: {e}")
         st.stop()
     frontier = pd.DataFrame([ret,vol])
     frontier_chart = frontier.T
@@ -297,7 +297,7 @@ def build_custom():
         curr_returns = mpt.portfolio_return(weights/100,exp_returns)
         curr_vol = mpt.portfolio_volatility(weights/100,cov)
         # except Exception as e:
-        #     st.error(f"Something didn't go right please contact support with the error message! \n Error: {e}")
+        #     st.error(f"Something didn't go right in CP please contact support with the error message! \n Error: {e}")
         #     st.stop()
         # curr_max = st.session_state.assets_data['Allocation'].max() # Static maximum -- deprecated
         # bound = curr_max + (5 - curr_max % 5)
