@@ -66,11 +66,11 @@ def call_mpt():
         st.session_state.compare_port = True
         
 def scatter_plot_custom(df,curr_ret,curr_vol,rf_rate,bound):
-    try:
-        ret, vol, wgts = mpt.generate_portfolio(df,bound)
-    except Exception as e:
-        st.error(f"Something didn't go right in GC please contact support with the error message! \n Error: {e}")
-        st.stop()
+    # try:
+    ret, vol, wgts = mpt.generate_portfolio(df,bound)
+    # except Exception as e:
+    #     st.error(f"Something didn't go right in GC please contact support with the error message! \n Error: {e}")
+    #     st.stop()
     frontier = pd.DataFrame([ret,vol])
     frontier_chart = frontier.T
     frontier_chart.columns = ['Expected Returns','Volatility']
@@ -292,13 +292,13 @@ def build_custom():
         weights = input_df[input_df['Asset'].isin(df['Ticker'])]['Allocation'].to_numpy()
         exp_returns = df['Total Return'].to_numpy()
         rf_rate = 0.06
-        # try:
-        cov = mpt.covariance_fc(history,df)
-        curr_returns = mpt.portfolio_return(weights/100,exp_returns)
-        curr_vol = mpt.portfolio_volatility(weights/100,cov)
-        # except Exception as e:
-        #     st.error(f"Something didn't go right in CP please contact support with the error message! \n Error: {e}")
-        #     st.stop()
+        try:
+            cov = mpt.covariance_fc(history,df)
+            curr_returns = mpt.portfolio_return(weights/100,exp_returns)
+            curr_vol = mpt.portfolio_volatility(weights/100,cov)
+        except Exception as e:
+            st.error(f"Something didn't go right in CP please contact support with the error message! \n Error: {e}")
+            st.stop()
         # curr_max = st.session_state.assets_data['Allocation'].max() # Static maximum -- deprecated
         # bound = curr_max + (5 - curr_max % 5)
         bound = list(zip(input_df['Minimum Allocation']/100, input_df['Maximum Allocation']/100))
