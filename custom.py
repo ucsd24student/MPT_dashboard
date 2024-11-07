@@ -320,7 +320,7 @@ def build_custom():
                 if input_df['Allocation'].sum() < 100:
                     row_df.loc['Cash'] = [0,100 - input_df['Allocation'].sum()]
                 with bar:
-                    disp,dld = st.columns(2,gap='large)
+                    disp,dld = st.columns(2,gap='large')
                     with disp:
                         st.header("Allocation Comparison")
                     with dld:
