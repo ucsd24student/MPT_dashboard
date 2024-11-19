@@ -77,7 +77,7 @@ def scatter_plot_custom(df,curr_ret,curr_vol,rf_rate,bound):
 
     if frontier_chart['Volatility'].min()>=40:
         frontier_chart['Volatility'] /= 10
-    curr_vol /= 10 if curr_vol > frontier_chart['Volatility'].mean() else curr_vol
+    curr_vol = frontier_chart['Volatility'].min() * 2 if curr_vol > frontier_chart['Volatility'].mean() else curr_vol
     frontier_chart = frontier_chart[frontier_chart['Volatility']<=150]
     frontier_sharpe = (frontier_chart['Expected Returns'] - rf_rate)/frontier_chart['Volatility']
     
