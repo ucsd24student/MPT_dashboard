@@ -23,15 +23,16 @@ def check_yf(input_data,df):
             st.error(f"Currently we do not have {tck} in our database. We'll soon include that.")
             flag = True
         except:
-            input_data = input_data.drop(input_data[input_data['Asset']==tck].index)
+            st.error(f"There is no such stock with symbol {tck}. Please add a correct symbol for the stock.")
         st.stop() if flag else None
     return input_data
 
 @st.cache_data
 def data_validation(input_data,df):
-    if input_data.columns[0] in df['Ticker']:
-        no_head = pd.DataFrame([df.columns], columns=df.columns)
-        input_data = pd.concat([no_head, input_data]).reset_index(drop=True)
+    if input_data.columns[0] in list(df['Ticker']):
+        input_data.loc[-1] = input_data.columns 
+        input_data.index = input_data.index + 1 
+        input_data = input_data.sort_index()
         
     input_data = input_data.drop(input_data.columns[2:], axis=1)
     input_data.columns = ['Asset','Allocation']
