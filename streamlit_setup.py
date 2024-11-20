@@ -155,8 +155,10 @@ def main_dashboard():
 
     div_slider = st.sidebar.checkbox('Dividend Yield in %', key='dy',help="Dividend Yield: Shows the annual dividend as a percentage of the stock’s current price, highlighting the income potential relative to the investment cost.")
     if div_slider:
-        div_values = st.sidebar.slider(' ', df['DividendYield'].min(),df['DividendYield'].max(),value=[0.0,15.0])
-
+        div_values = st.sidebar.slider(' ', df['DividendYield'].min(),df['DividendYield'].max(),value=[0.0,10.0])
+    else:
+        div_values = [0.0,10.0]
+        
     market_slider = st.sidebar.checkbox('Market Cap', key='mc',help="Represents a company’s total value in the market, determined by multiplying share price by the number of outstanding shares.")
     if market_slider:
         # mar_cap_values = st.sidebar.slider('Market Cap in $Bn', 0.004, 3287.0,value=[0.01, 10.0])
@@ -190,8 +192,8 @@ def main_dashboard():
     if pe_slider:
         df = df[df['PE Ratio'].between(pe_values[0],pe_values[1])]
 
-    if div_slider:
-        df = df[df['DividendYield'].between(div_values[0],div_values[1])]
+    # if div_slider:
+    df = df[df['DividendYield'].between(div_values[0],div_values[1])]
 
     if market_slider:
         df = df[df['Market Cap. (USD)'].between(min_market*1000000,max_market*1000000000)]
