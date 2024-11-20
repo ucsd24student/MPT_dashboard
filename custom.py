@@ -77,8 +77,8 @@ def scatter_plot_custom(df,curr_ret,curr_vol,rf_rate,bound):
 
     if frontier_chart['Volatility'].min()>=40:
         frontier_chart['Volatility'] /= 10
-    curr_vol = frontier_chart['Volatility'].min() * 2 if curr_vol > frontier_chart['Volatility'].mean() else curr_vol
-    frontier_chart = frontier_chart[frontier_chart['Volatility']<=150]
+    frontier_chart = frontier_chart[frontier_chart['Volatility']<=150].round(2)
+    curr_vol = frontier_chart['Volatility'].mean() if curr_vol > frontier_chart['Volatility'].max() else curr_vol
     frontier_sharpe = (frontier_chart['Expected Returns'] - rf_rate)/frontier_chart['Volatility']
     
     fig = px.scatter(frontier_chart,x='Volatility',y='Expected Returns',template="plotly_dark",color=frontier_sharpe,color_continuous_scale='YlGn' )
