@@ -25,7 +25,7 @@ def check_yf(input_data,df):
         except:
             st.error(f"There is no such stock with symbol {tck}. Please add a correct symbol for the stock.")
             flag = True
-        st.stop() if flag else None
+    st.stop() if flag else None
     return input_data
 
 @st.cache_data
